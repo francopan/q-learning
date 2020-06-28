@@ -17,20 +17,20 @@ public class Main {
 		Maze maze = new Maze(map);
 		QTable qTable = new QTable(120);
 
-		// Set start Positions
+		// Set start and target Positions
 		Integer startState = 112;
 		Integer targetState = 59;
 
 		// Make Episodes
 		Random randomGenerator = new Random();
-		for (Integer episodes = 1000; episodes > 0; episodes--) {
+		for (Integer episodes = 100; episodes > 0; episodes--) {
 			Integer currentState = startState;
+			//qTable.printTable();
+			System.out.println(episodes);
 			while (currentState != targetState) {
-			//	System.out.println(currentState);
 				
-				// Step 1 (Choose the Movement)
-				MovePosition movePosition = qTable.getBestReward(currentState, new ArrayList());
-				Integer[] nextCoordinates = null;
+				// Step 1 (Choose a Movement)
+				MovePosition movePosition = qTable.getBestReward(currentState, new ArrayList<MovePosition>());
 				Integer nextState = null;
 				do {
 					if (randomGenerator.nextDouble() >= 0.7) {
@@ -41,8 +41,7 @@ public class Main {
 						movePosition = sorted;
 					}
 					nextState = maze.move(currentState, movePosition);
-					nextCoordinates = maze.getCoordinates(nextState);
-				} while (nextState == -1 || !maze.validateMovement(nextCoordinates[0], nextCoordinates[1]));
+				} while (nextState == -1);
 
 				// Step 2 (Execute the Movement)
 				Integer[] currentCoordinates =  maze.getCoordinates(currentState);
@@ -71,9 +70,10 @@ public class Main {
 		//	System.out.println("---------------");
 		}
 		
-		// Printar o melhor caminho
+		// Print out best path
 		Integer currentState = startState;
 		Integer nextState;
+		//qTable.printTable();
 		while (currentState != targetState) {
 			System.out.println(currentState);
 			MovePosition bestPosition = null;
@@ -92,7 +92,6 @@ public class Main {
 		}
 		System.out.println(currentState);
 		
-//		qTable.printTable();
 		
 	}
 

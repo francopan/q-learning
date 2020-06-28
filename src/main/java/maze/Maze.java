@@ -33,7 +33,7 @@ public class Maze {
 
 	public Integer getPosition(Integer x, Integer y) {
 		
-		if (validateMovement(x, y) == false) {
+		if (this.validateMovement(x, y).equals(Boolean.FALSE)) {
 			return -1;
 		}
 		

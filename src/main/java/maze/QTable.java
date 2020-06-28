@@ -32,8 +32,8 @@ public class QTable {
 	}
 
 	public MovePosition getBestReward(Integer source, List<MovePosition> blackList) {
-		Double bestReward = -999999999999.0;
 		MovePosition bestPosition = MovePosition.values()[this.randomGenerator.nextInt(4)];
+		Double bestReward = this.getReward(source, bestPosition);
 
 		if (this.qTable[source].getUpReward() > bestReward && !blackList.contains(MovePosition.UP)) {
 			bestPosition = MovePosition.UP;
@@ -55,44 +55,48 @@ public class QTable {
 
 	public void setReward(Integer source, Integer target, MovePosition move, Double currentReward, Double targetReward,
 			MovePosition targetBestMove) {
-		Double reward = this.getReward(source, move);
-		Double learningRate = 0.5;
-		Double discountFactor = 0.1;
+		Double current_q = this.getReward(source, move);
+		Double learningRate = 0.1;
+		Double discountFactor = 0.3;
+		
 		switch (targetBestMove) {
 		case UP: {
-			reward = reward + learningRate * (targetReward + discountFactor * qTable[target].getUpReward() - reward);
-//			currentReward = currentReward + 0.5 * targetReward * qTable[target].getUpReward();
+			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getUpReward());
+			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getUpReward() - current_q);
 			break;
 		}
 		case DOWN: {
-			reward = reward + learningRate * (targetReward + discountFactor * qTable[target].getBelowReward() - reward);
+			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getBelowReward());
+			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getBelowReward() - current_q);
 			break;
 		}
 		case LEFT: {
-			reward = reward + learningRate * (targetReward + discountFactor * qTable[target].getLeftReward() - reward);
+			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getLeftReward());
+			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getLeftReward() - current_q);
 			break;
 		}
 		case RIGHT: {
-			reward = reward + learningRate * (targetReward + discountFactor * qTable[target].getRightReward() - reward);
+			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getRightReward());
+			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getRightReward() - current_q);
 			break;
 		}
 		}
 
 		switch (move) {
 		case UP: {
-			this.qTable[source].setUpReward(reward);
+			this.qTable[source].setUpReward(current_q);
 			break;
 		}
 		case DOWN: {
-			this.qTable[source].setBelowReward(reward);
+			this.qTable[source].setBelowReward(current_q);
 			break;
 		}
 		case LEFT: {
-			this.qTable[source].setLeftReward(reward);
+			this.qTable[source].setLeftReward(current_q);
 			break;
 		}
 		case RIGHT: {
-			this.qTable[source].setRightReward(reward);
+			this.qTable[source].setRightReward(current_q);
 			break;
 		}
 		}
@@ -106,5 +110,7 @@ public class QTable {
 							+ " , LEFT: " + qTable[i].getLeftReward() + " , RIGHT: " + qTable[i].getRightReward());
 		}
 	}
+	
+	
 
 }
