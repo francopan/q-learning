@@ -58,11 +58,15 @@ public class MapFrame extends JPanel {
 				Color terrainColor;
 				switch (this.map[i][j]) {
 					case -1: {
-						terrainColor = Color.red;
+						terrainColor = Color.RED;
+						break;
+					}
+					case -100: {
+						terrainColor = Color.DARK_GRAY;
 						break;
 					}
 					case 1: {
-						terrainColor = Color.GRAY;
+						terrainColor = Color.LIGHT_GRAY;
 						break;
 					}
 					case 100: {
