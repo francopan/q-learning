@@ -23,7 +23,7 @@ public class Main {
 
 		// Make Episodes
 		Random randomGenerator = new Random();
-		for (Integer episodes = 100; episodes > 0; episodes--) {
+		for (Integer episodes = 1000; episodes > 0; episodes--) {
 			Integer currentState = startState;
 			//qTable.printTable();
 			System.out.println(episodes);

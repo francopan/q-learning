@@ -26,7 +26,7 @@ public class QTable {
 		case LEFT:
 			return this.qTable[source].getLeftReward();
 		case RIGHT:
-			return this.qTable[source].getUpReward();
+			return this.qTable[source].getRightReward();
 		}
 		return null;
 	}
@@ -55,48 +55,28 @@ public class QTable {
 
 	public void setReward(Integer source, Integer target, MovePosition move, Double currentReward, Double targetReward,
 			MovePosition targetBestMove) {
-		Double current_q = this.getReward(source, move);
-		Double learningRate = 0.1;
-		Double discountFactor = 0.3;
+		Double currentQ = this.getReward(source, move);
+		Double maxFutureQ = this.getReward(target, targetBestMove);
+		Double learningRate = 0.5;
+		Double discountFactor = 0.1;
+		currentQ = currentQ + learningRate * (targetReward + discountFactor * maxFutureQ - currentQ);
 		
-		switch (targetBestMove) {
-		case UP: {
-			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getUpReward());
-			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getUpReward() - current_q);
-			break;
-		}
-		case DOWN: {
-			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getBelowReward());
-			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getBelowReward() - current_q);
-			break;
-		}
-		case LEFT: {
-			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getLeftReward());
-			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getLeftReward() - current_q);
-			break;
-		}
-		case RIGHT: {
-			current_q = (1 - learningRate) * current_q + learningRate * (targetReward + discountFactor * qTable[target].getRightReward());
-			//current_q = current_q + learningRate * (targetReward + discountFactor * qTable[target].getRightReward() - current_q);
-			break;
-		}
-		}
 
 		switch (move) {
 		case UP: {
-			this.qTable[source].setUpReward(current_q);
+			this.qTable[source].setUpReward(currentQ);
 			break;
 		}
 		case DOWN: {
-			this.qTable[source].setBelowReward(current_q);
+			this.qTable[source].setBelowReward(currentQ);
 			break;
 		}
 		case LEFT: {
-			this.qTable[source].setLeftReward(current_q);
+			this.qTable[source].setLeftReward(currentQ);
 			break;
 		}
 		case RIGHT: {
-			this.qTable[source].setRightReward(current_q);
+			this.qTable[source].setRightReward(currentQ);
 			break;
 		}
 		}
