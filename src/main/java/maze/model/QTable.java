@@ -1,6 +1,5 @@
-package maze;
+package maze.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -53,7 +52,7 @@ public class QTable {
 		return bestPosition;
 	}
 
-	public void setReward(Integer source, Integer target, MovePosition move, Double currentReward, Double targetReward,
+	public void setReward(Integer source, Integer target, MovePosition move, Double targetReward,
 			MovePosition targetBestMove) {
 		Double currentQ = this.getReward(source, move);
 		Double maxFutureQ = this.getReward(target, targetBestMove);

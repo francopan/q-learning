@@ -1,8 +1,16 @@
-package maze;
+package maze.model;
 
 public class Maze {
 
 	Integer[][] map;
+
+	public Integer[][] getMap() {
+		return map;
+	}
+
+	public void setMap(Integer[][] map) {
+		this.map = map;
+	}
 
 	public Maze(Integer[][] map) {
 		this.map = map;
@@ -17,12 +25,6 @@ public class Maze {
 		}
 	}
 
-	/**
-	 * Sends a positions and retrieves the coordinates
-	 * 
-	 * @param position
-	 * @return
-	 */
 	public Integer[] getCoordinates(Integer position) {
 		Integer[] coordinates = { 0, 0 };
 		Integer columnSize = this.map[0].length;
