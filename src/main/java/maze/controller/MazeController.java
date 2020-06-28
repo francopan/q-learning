@@ -7,24 +7,34 @@ import java.util.Random;
 import maze.model.Maze;
 import maze.model.MovePosition;
 import maze.model.QTable;
+import maze.view.MainFrame;
 
 public class MazeController {
 	
 	private Maze maze;
 	private QTable qTable;
 	private Random randomGenerator;
+	private MainFrame mf;
 	
 	public MazeController(Maze maze, QTable qTable) {
 		this.maze = maze;
 		this.qTable = qTable;
 		this.randomGenerator = new Random();
+		this. mf = new MainFrame();		
 	}
 	
 	public void explore(Integer nmEpisodes, Integer startState, Integer targetState) {
+		this.mf.updateMap(this.maze.getMap(), maze.getCoordinates(startState));
 		for (Integer episodes = nmEpisodes; episodes > 0; episodes--) {
 			Integer currentState = startState;
 			while (!currentState.equals(targetState)) {
-				
+				try {
+					this.mf.updateMap(this.maze.getMap(), maze.getCoordinates(currentState));
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				// Step 1 (Choose a Movement)
 				MovePosition movePosition = qTable.getBestReward(currentState, new ArrayList<MovePosition>());
 				Integer nextState = null;

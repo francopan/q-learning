@@ -1,22 +1,34 @@
 package maze.view;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Label;
 
 import javax.swing.JFrame;
 
 public class MainFrame {
 	
+	private JFrame frame;
+	private MapFrame mp;
+	
+	
 	public MainFrame() {
-		JFrame frame = new JFrame("FrameDemo");
+		this.frame = new JFrame("FrameDemo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//Label l = new Label();
 		//l.setText("Teste");
 		//frame.getContentPane().add(l, BorderLayout.CENTER);
-		MapFrame mp = new MapFrame(20, 12);
-		frame.add(mp);
-		frame.setSize(new Dimension(400,300));
-		frame.setVisible(true);
+		this.frame.setSize(new Dimension(800,600));
+		this.frame.setVisible(true);
+	}
+
+	public void updateMap(Integer[][] map, Integer[] currentPosition) {
+		if (this.mp == null) {
+			this.mp = new MapFrame(map, currentPosition);
+			this.frame.add(mp);
+		} else {
+			this.mp.setMap(map);
+			this.mp.setCurrentPosition(currentPosition);
+			this.mp.repaint();
+		}
+		this.frame.validate();
 	}
 }
