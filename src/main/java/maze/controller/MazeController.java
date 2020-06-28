@@ -28,13 +28,14 @@ public class MazeController {
 		for (Integer episodes = nmEpisodes; episodes > 0; episodes--) {
 			Integer currentState = startState;
 			while (!currentState.equals(targetState)) {
-				try {
+				
+				try { // Print out map
 					this.mf.updateMap(this.maze.getMap(), maze.getCoordinates(currentState));
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 				// Step 1 (Choose a Movement)
 				MovePosition movePosition = qTable.getBestReward(currentState, new ArrayList<MovePosition>());
 				Integer nextState = null;
@@ -74,6 +75,7 @@ public class MazeController {
 	
 	public List<Integer> getPath(Integer currentState, Integer targetState) {
 		Integer nextState;
+		Integer[][] finalMap = this.maze.getMap();
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		while (!currentState.equals(targetState)) {
 			path.add(currentState);
@@ -89,6 +91,14 @@ public class MazeController {
 			currentState = nextState;
 		}
 		path.add(currentState);
+		
+		for (Integer integer : path) {
+			Integer[] coordinates = this.maze.getCoordinates(integer);
+			finalMap[coordinates[0]][coordinates[1]] = -1;
+		}
+		this.mf.updateMap(finalMap, maze.getCoordinates(currentState));
+		
+		
 		return path;
 	}
 

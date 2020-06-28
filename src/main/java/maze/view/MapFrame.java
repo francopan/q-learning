@@ -19,7 +19,7 @@ public class MapFrame extends JPanel {
 		this.map = map;
 		this.currentPosition = currentPosition;
 		this.colorMap();
-		setPreferredSize(new Dimension(10, 10));
+		//setPreferredSize(new Dimension(10, 10));
 	}
 
 	private void colorMap() {
@@ -47,8 +47,8 @@ public class MapFrame extends JPanel {
 		// Clear the board
 		g.clearRect(0, 0, getWidth(), getHeight());
 		// Draw the grid
-		int rectWidth = getWidth() / ySize;
-		int rectHeight = getHeight() / xSize;
+		int rectWidth = getHeight() / xSize;
+		int rectHeight = getWidth() / ySize;
 
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
@@ -57,6 +57,10 @@ public class MapFrame extends JPanel {
 				int x = j * rectHeight;
 				Color terrainColor;
 				switch (this.map[i][j]) {
+					case -1: {
+						terrainColor = Color.red;
+						break;
+					}
 					case 1: {
 						terrainColor = Color.GRAY;
 						break;
@@ -70,13 +74,13 @@ public class MapFrame extends JPanel {
 					}
 				}
 				g.setColor(terrainColor);
-				g.fillRect(x, y, rectWidth, rectHeight);
+				g.fillRect(x, y, rectHeight, rectWidth);
 			}
 		}
 		
 		
 		g.setColor(Color.BLUE);
-		g.fillRect(this.currentPosition[1] * rectHeight, this.currentPosition[0] * rectWidth, rectWidth, rectHeight);
+		g.fillRect(this.currentPosition[1] * rectHeight, this.currentPosition[0] * rectWidth, rectHeight, rectWidth);
 		
 		
 	}
