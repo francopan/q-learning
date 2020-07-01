@@ -66,7 +66,7 @@ public class QTableFrame extends JFrame{
 					values[2] = qCell.getReward(movePosition).toString();
 					this.data[i] = values;
 				} else {
-					this.data[i][0] = Integer.toString(i/4 + 1);
+					this.data[i][0] = Integer.toString(i/4);
 					this.data[i][1] = movePosition.toString();
 					this.data[i][2] = qCell.getReward(movePosition).toString();
 				}
