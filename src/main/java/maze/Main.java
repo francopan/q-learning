@@ -22,7 +22,7 @@ public class Main {
 			{ 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 }
 	};
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		// Create Maze and Q-Table
 		Maze maze = new Maze(map);
 		QTable qTable = new QTable(120);
@@ -33,7 +33,7 @@ public class Main {
 
 		// Make Episodes
 		MazeController mazeController = new MazeController(maze, qTable);
-		mazeController.explore(1000, startState, targetState);
+		mazeController.explore(200, startState, targetState);
 		
 		// Print out best path
 		List<Integer> path = mazeController.getPath(startState, targetState);

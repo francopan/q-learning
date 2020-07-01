@@ -15,51 +15,35 @@ public class QTable {
 		}
 		this.randomGenerator = new Random();
 	}
-
-	public Double getReward(Integer source, MovePosition movement) {
-		switch (movement) {
-		case UP:
-			return this.qTable[source].getUpReward();
-		case DOWN:
-			return this.qTable[source].getBelowReward();
-		case LEFT:
-			return this.qTable[source].getLeftReward();
-		case RIGHT:
-			return this.qTable[source].getRightReward();
-		}
-		return null;
+	
+	public Integer size() {
+		return this.qTable.length;
 	}
 
-	public MovePosition getBestReward(Integer source, List<MovePosition> blackList) {
+	public Double getReward(Integer source, MovePosition movement) {
+		return this.qTable[source].getReward(movement);
+	}
+
+	public MovePosition getBestRewardPosition(Integer source, List<MovePosition> blackList) {
 		MovePosition bestPosition = MovePosition.values()[this.randomGenerator.nextInt(4)];
 		Double bestReward = this.getReward(source, bestPosition);
-
-		if (this.qTable[source].getUpReward() > bestReward && !blackList.contains(MovePosition.UP)) {
-			bestPosition = MovePosition.UP;
-			bestReward = this.qTable[source].getUpReward();
-		}
-		if (this.qTable[source].getBelowReward() > bestReward && !blackList.contains(MovePosition.DOWN)) {
-			bestPosition = MovePosition.DOWN;
-			bestReward = this.qTable[source].getBelowReward();
-		}
-		if (this.qTable[source].getLeftReward() > bestReward && !blackList.contains(MovePosition.LEFT)) {
-			bestPosition = MovePosition.LEFT;
-			bestReward = this.qTable[source].getLeftReward();
-		}
-		if (this.qTable[source].getRightReward() > bestReward && !blackList.contains(MovePosition.RIGHT)) {
-			bestPosition = MovePosition.RIGHT;
+		for (MovePosition move : MovePosition.values()) {
+			Double reward = getReward(source, move);
+			if (reward > bestReward && !blackList.contains(move)) {
+				bestPosition = move;
+				bestReward = reward;
+			}
 		}
 		return bestPosition;
 	}
 
-	public void setReward(Integer source, Integer target, MovePosition move, Double targetReward,
+	public Double setReward(Integer source, Integer target, MovePosition move, Double targetReward,
 			MovePosition targetBestMove) {
 		Double currentQ = this.getReward(source, move);
 		Double maxFutureQ = this.getReward(target, targetBestMove);
 		Double learningRate = 0.5;
 		Double discountFactor = 0.1;
 		currentQ = currentQ + learningRate * (targetReward + discountFactor * maxFutureQ - currentQ);
-		
 
 		switch (move) {
 		case UP: {
@@ -79,6 +63,7 @@ public class QTable {
 			break;
 		}
 		}
+		return currentQ;
 
 	}
 
@@ -90,6 +75,8 @@ public class QTable {
 		}
 	}
 	
-	
+	public QCell getQCell(Integer position) {
+		return this.qTable[position];
+	}
 
 }

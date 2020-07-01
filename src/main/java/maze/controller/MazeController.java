@@ -8,36 +8,43 @@ import maze.model.Maze;
 import maze.model.MovePosition;
 import maze.model.QTable;
 import maze.view.MainFrame;
+import maze.view.QTableFrame;
 
 public class MazeController {
-	
+
 	private Maze maze;
 	private QTable qTable;
 	private Random randomGenerator;
 	private MainFrame mf;
-	
+	private QTableFrame qTableFrame;
+
+	private Integer[] startPositionCoordinates, endPositionCoordinates;
+
 	public MazeController(Maze maze, QTable qTable) {
 		this.maze = maze;
 		this.qTable = qTable;
 		this.randomGenerator = new Random();
-		this. mf = new MainFrame();		
+		this.mf = new MainFrame();
+		this.qTableFrame = new QTableFrame(qTable);
 	}
-	
-	public void explore(Integer nmEpisodes, Integer startState, Integer targetState) {
-		this.mf.updateMap(this.maze.getMap(), maze.getCoordinates(startState));
+
+	public void explore(Integer nmEpisodes, Integer startState, Integer targetState) throws InterruptedException {
+		this.startPositionCoordinates = maze.getCoordinates(startState);
+		this.endPositionCoordinates = maze.getCoordinates(targetState);
+		this.mf.updateMap(this.maze.getMap(), startPositionCoordinates, startPositionCoordinates,
+				endPositionCoordinates);
+
 		for (Integer episodes = nmEpisodes; episodes > 0; episodes--) {
 			Integer currentState = startState;
 			while (!currentState.equals(targetState)) {
-				
-				try { // Print out map
-					this.mf.updateMap(this.maze.getMap(), maze.getCoordinates(currentState));
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
+
+				// Print out map
+				this.mf.updateMap(this.maze.getMap(), maze.getCoordinates(currentState), startPositionCoordinates,
+						endPositionCoordinates);
+				Thread.sleep(1);
+
 				// Step 1 (Choose a Movement)
-				MovePosition movePosition = qTable.getBestReward(currentState, new ArrayList<MovePosition>());
+				MovePosition movePosition = qTable.getBestRewardPosition(currentState, new ArrayList<MovePosition>());
 				Integer nextState = null;
 				do {
 					if (this.randomGenerator.nextDouble() >= 0.7) {
@@ -49,57 +56,49 @@ public class MazeController {
 					}
 					nextState = maze.move(currentState, movePosition);
 				} while (nextState == -1);
-
-				// Step 2 (Execute the Movement)
-				Integer[] targetCoordinates =  maze.getCoordinates(nextState);
+				Integer[] targetCoordinates = maze.getCoordinates(nextState);
 				Double targetReward = maze.getMap()[targetCoordinates[0]][targetCoordinates[1]] * 1.0;
-				
-				// Calculate qTable information
-				MovePosition targetBestPosition = null;
-				ArrayList<MovePosition> invalidMovements = new ArrayList<MovePosition>();
-				Integer[] futureCoordinates = null;
-				do {
-					if (targetBestPosition != null) {
-						invalidMovements.add(targetBestPosition);
-					}
-					targetBestPosition = qTable.getBestReward(nextState, invalidMovements);
-					futureCoordinates = maze.getCoordinates(maze.move(nextState, targetBestPosition));
-				} while (maze.validateMovement(futureCoordinates[0], futureCoordinates[1]).equals(Boolean.FALSE));
-				
-				// Sets Q-Table reward and move
-				qTable.setReward(currentState, nextState,movePosition,targetReward, targetBestPosition);
+
+				// Step 2 (Sets Q-Table reward and move)
+				Double reward = qTable.setReward(currentState, nextState, movePosition, targetReward,
+						getBestMoveFromTarget(nextState));
+				this.qTableFrame.setQTable(qTable);
 				currentState = nextState;
-			}				
+			}
 		}
 	}
-	
+
 	public List<Integer> getPath(Integer currentState, Integer targetState) {
-		Integer nextState;
 		Integer[][] finalMap = this.maze.getMap();
 		ArrayList<Integer> path = new ArrayList<Integer>();
+
+		// Walk in Map (goes to best position from Q Table)
 		while (!currentState.equals(targetState)) {
 			path.add(currentState);
-			MovePosition bestPosition = null;
-			ArrayList<MovePosition> invalidMovements = new ArrayList<MovePosition>();
-			do {
-				if (bestPosition != null) {
-					invalidMovements.add(bestPosition);
-				}
-				bestPosition = qTable.getBestReward(currentState, invalidMovements);
-				nextState = maze.move(currentState, bestPosition);
-			} while (nextState == -1);
-			currentState = nextState;
+			currentState = maze.move(currentState, getBestMoveFromTarget(currentState));
 		}
 		path.add(currentState);
-		
+
+		// Print out best path in the Map
 		for (Integer integer : path) {
 			Integer[] coordinates = this.maze.getCoordinates(integer);
 			finalMap[coordinates[0]][coordinates[1]] = -1;
 		}
-		this.mf.updateMap(finalMap, maze.getCoordinates(currentState));
-		
-		
+		this.mf.updateMap(finalMap, maze.getCoordinates(currentState), startPositionCoordinates,
+				endPositionCoordinates);
 		return path;
+	}
+
+	private MovePosition getBestMoveFromTarget(Integer currentPosition) {
+		MovePosition bestPosition = null;
+		ArrayList<MovePosition> invalidMovements = new ArrayList<MovePosition>();
+		Integer[] coordinates = null;
+		do {
+			invalidMovements.add(bestPosition);
+			bestPosition = qTable.getBestRewardPosition(currentPosition, invalidMovements);
+			coordinates = maze.getCoordinates(maze.move(currentPosition, bestPosition));
+		} while (maze.validateMovement(coordinates[0], coordinates[1]).equals(Boolean.FALSE));
+		return bestPosition;
 	}
 
 }

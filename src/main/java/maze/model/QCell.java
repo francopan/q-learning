@@ -43,4 +43,18 @@ public class QCell {
 		this.rightReward = rightReward;
 	}
 	
+	public Double getReward(MovePosition movement) {
+		switch (movement) {
+		case UP:
+			return this.getUpReward();
+		case DOWN:
+			return this.getBelowReward();
+		case LEFT:
+			return this.getLeftReward();
+		case RIGHT:
+			return this.getRightReward();
+		}
+		return null;
+	}
+	
 }
