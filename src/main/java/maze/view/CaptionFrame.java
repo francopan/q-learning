@@ -14,14 +14,14 @@ import javax.swing.border.EmptyBorder;
 public class CaptionFrame extends JFrame{
 	
 	private static final long serialVersionUID = 1L;
-	private static Integer CAPTIONS = 6;
+	private static Integer CAPTIONS = 7;
 	
 	public CaptionFrame() {
 		this.setTitle("Captions");
 		this.setSize(new Dimension(300,400));
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setLocation(250, 601);
-		this.setLayout(new GridLayout(7,1));
+		this.setLocation(250, 610);
+		this.setLayout(new GridLayout(8,1));
 		this.setBackground(Color.DARK_GRAY);
 
 		JLabel titleLabel = new JLabel("Caption");
@@ -29,7 +29,7 @@ public class CaptionFrame extends JFrame{
 		this.add(titleLabel);
 		
 		Color[] colors = {
-			Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.LIGHT_GRAY, Color.BLACK	
+			Color.WHITE, Color.GREEN, Color.BLUE, Color.DARK_GRAY, Color.LIGHT_GRAY, Color.BLACK, Color.RED
 		};
 		String[] captions = {
 				"Start Position",
@@ -37,7 +37,8 @@ public class CaptionFrame extends JFrame{
 				"Current Position",
 				"Obstacle",
 				"Available Position",
-				"Out of Borders"
+				"Out of Borders",
+				"Best Path"
 		};
 		
 		for (Integer i =0; i < CAPTIONS; i++) {
